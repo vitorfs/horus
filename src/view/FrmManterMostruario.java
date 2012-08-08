@@ -1,0 +1,559 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/*
+ * FrmManterMostruario.java
+ *
+ * Created on Dec 16, 2011, 7:13:48 PM
+ */
+package view;
+
+import controller.ManterMostruarioController;
+import controller.ManterProdutoController;
+import controller.ManterRevendedoraController;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import model.Mostruario;
+import model.Produto;
+import model.Revendedora;
+import print.ImprimirRomaneio;
+import util.Horus;
+import tablemodel.ProdutoMostruarioTableModel;
+
+/**
+ *
+ * @author Vitor
+ */
+public class FrmManterMostruario extends javax.swing.JDialog {
+    private ProdutoMostruarioTableModel model;
+    private Map<String,Integer> disponibilidade;
+    private Map<String,Integer> disponibilidadeAlteracao;
+    private List<Produto> produtoAux = null;
+    
+    //private TableRowSorter<ProdutoMostruarioTableModel> sorter;
+
+    /** Creates new form FrmManterMostruario */
+    public FrmManterMostruario(java.awt.Frame parent, boolean modal, Mostruario mostruario) {
+        super(parent, modal);
+        initComponents();
+        
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(this.getClass().getResource("/images/briefcase.png"));
+        } catch (IOException e) {
+            
+        }
+        this.setIconImage(image);
+        
+        if (mostruario==null){
+            this.setTitle("Novo Mostruário");
+
+            txtDataRetirada.setText(new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()));
+            disponibilidade = new HashMap<String, Integer>();
+            disponibilidadeAlteracao = new HashMap<String, Integer>();
+            
+        } else {
+            this.setTitle("Detalhes Mostruário");
+            
+            produtoAux = new ArrayList<Produto>();
+            txtCodigo.setText(mostruario.getId().toString());
+            txtDataRetirada.setText(mostruario.getDataRetirada());
+            txtDataAcerto.setText(mostruario.getDataAcerto());
+            
+            for (int i=1;i<cbRevendedora.getItemCount();i++)
+                if (((Revendedora)cbRevendedora.getItemAt(i)).getId().equals(mostruario.getRevendedora().getId())){
+                    cbRevendedora.setSelectedIndex(i);
+                    break;
+                }
+            
+            try {
+                mostruario.setProdutos(ManterMostruarioController.getInstance().listarProdutosMostruario(mostruario.getId(), 0));
+                addProdutos(mostruario.getProdutos());
+                disponibilidade = ManterMostruarioController.getInstance().preencherDisponibilidade(mostruario.getId());
+                disponibilidadeAlteracao = new HashMap<String, Integer>();
+                disponibilidadeAlteracao.putAll(disponibilidade);
+            } catch (Exception e){
+                JOptionPane.showMessageDialog(null, e.getMessage()+"Erro ao carregar lista de produtos.");
+                this.dispose();
+            }
+            
+            if (mostruario.getDataFechamento()!=null){
+                cbRevendedora.setEnabled(false);
+                txtDataAcerto.setEnabled(false);
+                txtDataRetirada.setEnabled(false);
+                txtCodProduto.setEnabled(false);
+                btnRemover.setEnabled(false);
+                btnBuscar.setEnabled(false);
+                btnSalvar.setEnabled(false);
+            }
+        }
+        
+        txtCodProduto.requestFocus();
+/*        sorter = new TableRowSorter<ProdutoMostruarioTableModel>(model);
+        tblProdutos.setRowSorter(sorter);        */
+    }
+    
+    private void addProduto(Produto produto) throws Exception{
+        getModel().addProduto(produto);
+        tblProdutos.changeSelection(getModel().getRowCount()-1,0,false,false);
+    }
+    
+    private void addProdutos(List<Produto> produtos){
+        try{
+            getModel().limpar();
+            getModel().addListaDeProdutos(produtos);
+        } catch(Exception e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }    
+    
+    private JTable getTblProduto() {
+            if (tblProdutos == null) {
+                    tblProdutos = new JTable();
+                    tblProdutos.setModel(new ProdutoMostruarioTableModel());
+            }
+            return tblProdutos;
+    }
+    
+    private ProdutoMostruarioTableModel getModel() {
+            if (model == null) {
+                    model = (ProdutoMostruarioTableModel) getTblProduto().getModel();
+            }
+            return model;
+    }       
+
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel1 = new javax.swing.JPanel();
+        lbTitleFornecedor = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        cbRevendedora = new javax.swing.JComboBox();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        txtDataRetirada = new javax.swing.JFormattedTextField();
+        txtDataAcerto = new javax.swing.JFormattedTextField();
+        txtCodigo = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblProdutos = new javax.swing.JTable();
+        txtCodProduto = new javax.swing.JTextField();
+        btnBuscar = new javax.swing.JButton();
+        btnRemover = new javax.swing.JButton();
+        btnSalvar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        lbTitleFornecedor.setFont(new java.awt.Font("Tahoma", 1, 24));
+        lbTitleFornecedor.setForeground(new java.awt.Color(51, 51, 51));
+        lbTitleFornecedor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/folder.png"))); // NOI18N
+        lbTitleFornecedor.setText("Mostruário");
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Dados do Mostruário", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 11))); // NOI18N
+
+        jLabel1.setText("Revendedora:");
+
+        try {
+            Horus.atualizarComboBox(cbRevendedora, ManterRevendedoraController.getInstance().getRevendedorasAtivas());
+        } catch (Exception e){
+            JOptionPane.showMessageDialog(null, "Erro ao carregar Revendedoras!");
+        }
+
+        jLabel2.setText("Data de Retirada:");
+
+        jLabel3.setText("Data de Acerto:");
+
+        try {
+            txtDataRetirada.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            txtDataAcerto.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        txtCodigo.setEditable(false);
+
+        jLabel4.setText("Código Mostruário:");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cbRevendedora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(txtCodigo, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtDataRetirada, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtDataAcerto, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(329, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(cbRevendedora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(12, 12, 12)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addComponent(txtDataRetirada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtDataAcerto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Produtos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 11))); // NOI18N
+
+        tblProdutos.setModel(new ProdutoMostruarioTableModel());
+        tblProdutos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tblProdutosKeyReleased(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblProdutos);
+
+        txtCodProduto.setFont(new java.awt.Font("Tahoma", 0, 14));
+        txtCodProduto.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtCodProduto.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtCodProduto.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtCodProdutoKeyPressed(evt);
+            }
+        });
+
+        btnBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/find.png"))); // NOI18N
+        btnBuscar.setText("Buscar");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
+
+        btnRemover.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cross.png"))); // NOI18N
+        btnRemover.setText("Remover");
+        btnRemover.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoverActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 647, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(btnRemover)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnBuscar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtCodProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtCodProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnBuscar)
+                        .addComponent(btnRemover)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        btnSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/disk.png"))); // NOI18N
+        btnSalvar.setText("Salvar");
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
+
+        btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cancel.png"))); // NOI18N
+        btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lbTitleFornecedor)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnSalvar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnCancelar)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lbTitleFornecedor)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCancelar)
+                    .addComponent(btnSalvar))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(20, Short.MAX_VALUE))
+        );
+
+        pack();
+        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        java.awt.Dimension dialogSize = getSize();
+        setLocation((screenSize.width-dialogSize.width)/2,(screenSize.height-dialogSize.height)/2);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverActionPerformed
+        if (tblProdutos.getSelectedColumn()!=-1&&tblProdutos.getSelectedRow()!=-1){
+            int modelRow = tblProdutos.convertRowIndexToModel(tblProdutos.getSelectedRow());
+            Produto produto = getModel().getProduto(modelRow);
+            disponibilidade.put(produto.getCodigo(), disponibilidade.get(produto.getCodigo())-1);
+            getModel().removeProduto(modelRow);
+            
+            if (produtoAux!=null){
+                produtoAux.remove(produto);
+            }
+            //System.out.println(produto.getCodigo() + ": " + disponibilidade.get(produto.getCodigo()));
+        }
+    }//GEN-LAST:event_btnRemoverActionPerformed
+
+    private void txtCodProdutoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCodProdutoKeyPressed
+        if (evt.getKeyCode()==10){
+            try {
+                String cod;
+                cod = txtCodProduto.getText().toUpperCase();
+                
+                if (disponibilidade.get(cod)==null){
+                    disponibilidade.put(cod, 0);
+                    disponibilidadeAlteracao.put(cod, 0);
+                }
+                
+                Produto produto = ManterProdutoController.getInstance().getProduto(cod, disponibilidade.get(cod), disponibilidadeAlteracao.get(cod));
+                
+                if (produto!=null){
+                    produto.setData(new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()));
+                    addProduto(produto);
+                    disponibilidade.put(cod, disponibilidade.get(cod)+1);
+                    if (produtoAux!=null)
+                        produtoAux.add(produto);
+                }
+                
+            } catch (Exception e){
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            } finally {
+                txtCodProduto.setText("");
+            }
+        }
+    }//GEN-LAST:event_txtCodProdutoKeyPressed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        if (JOptionPane.showConfirmDialog(null, "Tem certeza que deseja fechar esta janela?")==JOptionPane.YES_OPTION){
+            this.dispose();
+        }
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        try {
+            Mostruario mostruario = new Mostruario();
+            mostruario.setId(txtCodigo.getText().isEmpty()?0:Integer.parseInt(txtCodigo.getText()));
+            mostruario.setRevendedora((Revendedora)cbRevendedora.getSelectedItem());
+            mostruario.setDataRetirada(txtDataRetirada.getText());
+            mostruario.setDataAcerto(txtDataAcerto.getText());
+            mostruario.setProdutos(getModel().getTodosProdutos());
+            
+            if (mostruario.getId()==0)
+                ManterMostruarioController.getInstance().inserirNovoMostruario(mostruario);
+            else {
+                ManterMostruarioController.getInstance().atualizarMostruario(mostruario);
+            }
+            
+            this.dispose();
+            JOptionPane.showMessageDialog(null, "Mostruário salvo com sucesso!");
+            
+            if (mostruario.getId()!=0){
+                if (JOptionPane.showConfirmDialog(null, "Imprimir romaneio complementar?")==JOptionPane.YES_OPTION){
+                    new ImprimirRomaneio(null, true, mostruario, produtoAux).setVisible(true);
+                }                
+            }
+            
+        } catch (Exception e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        FrmBuscarProdutoEmEstoque busca = new FrmBuscarProdutoEmEstoque(null, true, disponibilidade, disponibilidadeAlteracao);
+        busca.setVisible(true);
+        Produto produto = busca.getRetornoBusca();
+        if (produto!=null){
+            produto.setData(new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()));
+            try {
+                if (disponibilidade.get(produto.getCodigo())==null){
+                    disponibilidade.put(produto.getCodigo(), 0);
+                    disponibilidadeAlteracao.put(produto.getCodigo(), 0);
+                }
+                addProduto(produto);
+                disponibilidade.put(produto.getCodigo(), disponibilidade.get(produto.getCodigo())+1);     
+                if (produtoAux!=null)
+                    produtoAux.add(produto);                
+            } catch (Exception e){
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+        
+    private void tblProdutosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblProdutosKeyReleased
+        if (evt.getKeyCode()==123){
+            FrmBuscaLista frmBusca = new FrmBuscaLista(null, true, getModel());
+            frmBusca.setVisible(true);
+            
+            if (frmBusca.getModelRow()!=-1){
+                //tblProdutos.setRowSelectionInterval(frmBusca.getModelRow(), frmBusca.getModelRow());
+                tblProdutos.changeSelection(frmBusca.getModelRow(), 0, false, false);
+            }
+        }
+    }//GEN-LAST:event_tblProdutosKeyReleased
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(FrmManterMostruario.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(FrmManterMostruario.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(FrmManterMostruario.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(FrmManterMostruario.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the dialog */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+
+            public void run() {
+                FrmManterMostruario dialog = new FrmManterMostruario(new javax.swing.JFrame(), true, null);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
+            }
+        });
+    }
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnRemover;
+    private javax.swing.JButton btnSalvar;
+    private javax.swing.JComboBox cbRevendedora;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lbTitleFornecedor;
+    private javax.swing.JTable tblProdutos;
+    private javax.swing.JTextField txtCodProduto;
+    private javax.swing.JTextField txtCodigo;
+    private javax.swing.JFormattedTextField txtDataAcerto;
+    private javax.swing.JFormattedTextField txtDataRetirada;
+    // End of variables declaration//GEN-END:variables
+}
