@@ -63,6 +63,10 @@ public final class ManterMostruarioController extends Observable{
         notifyObservers();        
     }
     
+    public Mostruario getMostruario(int id) throws SQLException, ClassNotFoundException {
+        return MostruarioDAO.getInstance().getMostruario(id);
+    }    
+    
     public List<Mostruario> listarMostruarios(boolean exibirTudo) throws SQLException, ClassNotFoundException {
         return MostruarioDAO.getInstance().listarMostruarios(exibirTudo);
     }

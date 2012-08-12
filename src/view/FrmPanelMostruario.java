@@ -100,6 +100,11 @@ public class FrmPanelMostruario extends javax.swing.JPanel implements Observer{
 
         tblMostruarios.setModel(new MostruarioTableModel());
         addMostruarios();
+        tblMostruarios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblMostruariosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblMostruarios);
 
         btnDetalhes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/find.png"))); // NOI18N
@@ -266,7 +271,7 @@ public class FrmPanelMostruario extends javax.swing.JPanel implements Observer{
         addMostruarios();
     }//GEN-LAST:event_ckExibirTudoActionPerformed
 
-    private void btnDetalhesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetalhesActionPerformed
+    private void exibirDetalhes() {
         if (tblMostruarios.getSelectedColumn()!=-1&&tblMostruarios.getSelectedRow()!=-1){
             int modelRow = tblMostruarios.convertRowIndexToModel(tblMostruarios.getSelectedRow());
             Mostruario mostruario = new Mostruario();
@@ -277,7 +282,10 @@ public class FrmPanelMostruario extends javax.swing.JPanel implements Observer{
                 new FrmFecharMostruario(null, true, mostruario, "Detalhes Mostruário").setVisible(true);
         }
         else
-            JOptionPane.showMessageDialog(null, "Nenhuma linha foi selecionada.");
+            JOptionPane.showMessageDialog(null, "Nenhuma linha foi selecionada.");    
+    }
+    private void btnDetalhesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetalhesActionPerformed
+        exibirDetalhes();
     }//GEN-LAST:event_btnDetalhesActionPerformed
 
     private void btnRomaneioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRomaneioActionPerformed
@@ -341,6 +349,12 @@ public class FrmPanelMostruario extends javax.swing.JPanel implements Observer{
           sorter.setRowFilter(RowFilter.regexFilter("(?i)"+text));
         }
     }//GEN-LAST:event_txtFiltroKeyReleased
+
+    private void tblMostruariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblMostruariosMouseClicked
+        if (evt.getClickCount() > 1) {
+            exibirDetalhes();
+        }
+    }//GEN-LAST:event_tblMostruariosMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDetalhes;

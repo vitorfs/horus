@@ -67,6 +67,13 @@ public class LogEstoqueTableModel extends AbstractTableModel{
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
             return false;
+    }
+    
+    
+    public void addListaDeLog(List<LogEstoque> log) {
+            int tamanhoAntigo = getRowCount();
+            linhas.addAll(log);
+            fireTableRowsInserted(tamanhoAntigo, getRowCount() - 1);
     }    
     
 }

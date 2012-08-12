@@ -13,7 +13,7 @@ import javax.swing.table.AbstractTableModel;
 public class ProdutoMostruarioTableModel extends AbstractTableModel {
     private List<Produto> linhas;
     private String[] colunas = new String[] {
-                    "Nº", "Código", "Nome", "Preço", "Data"};
+                    "Nº", "Código", "Nome", "Data", "Preço"};
     
     public ProdutoMostruarioTableModel() {
             linhas = new ArrayList<Produto>();
@@ -59,8 +59,8 @@ public class ProdutoMostruarioTableModel extends AbstractTableModel {
             case 0: return rowIndex+1;                
             case 1: return produto.getCodigo();
             case 2: return produto.getNome();
-            case 3: return NumberFormat.getCurrencyInstance().format(produto.getValorSaida());
-            case 4: return produto.getData();
+            case 3: return produto.getData();
+            case 4: return NumberFormat.getCurrencyInstance().format(produto.getValorSaida());
             default: throw new IndexOutOfBoundsException("columnIndex out of bounds");
             }
     }

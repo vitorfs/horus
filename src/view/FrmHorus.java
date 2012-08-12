@@ -62,6 +62,7 @@ public class FrmHorus extends javax.swing.JFrame {
         mainTabbedPane.addTab("Mostruários", new javax.swing.ImageIcon(getClass().getResource("/images/briefcase.png")), new view.FrmPanelMostruario());
         mainTabbedPane.addTab("Estoque", new javax.swing.ImageIcon(getClass().getResource("/images/box.png")), new view.FrmPanelEstoque());
         //mainTabbedPane.addTab("Relatórios", new javax.swing.ImageIcon(getClass().getResource("/images/chart_bar.png")), new view.FrmPanelRelatorios());
+        mainTabbedPane.addTab("Financeiro", new javax.swing.ImageIcon(getClass().getResource("/images/money_dollar.png")), new view.FrmPanelFinanceiro());
 
         mmArquivo.setMnemonic('A');
         mmArquivo.setText("Arquivo");

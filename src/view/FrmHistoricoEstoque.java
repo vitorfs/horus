@@ -12,8 +12,12 @@ package view;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.sql.SQLException;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.RowFilter;
+import javax.swing.table.TableRowSorter;
 import persistence.EstoqueDAO;
 import tablemodel.LogEstoqueTableModel;
 
@@ -22,7 +26,8 @@ import tablemodel.LogEstoqueTableModel;
  * @author Vitor
  */
 public class FrmHistoricoEstoque extends javax.swing.JDialog {
-    LogEstoqueTableModel model;
+    private LogEstoqueTableModel model;
+    private TableRowSorter<LogEstoqueTableModel> sorter;
 
     /** Creates new form FrmHistoricoEstoque */
     public FrmHistoricoEstoque(java.awt.Frame parent, boolean modal) {
@@ -38,13 +43,38 @@ public class FrmHistoricoEstoque extends javax.swing.JDialog {
         this.setIconImage(image);   
         
         try {
-            tblHistorico.setModel(new LogEstoqueTableModel(EstoqueDAO.getInstance().getHistoricoEstoque()));
-            tblHistorico.setRowHeight(20);
-
+            tblHistorico.setRowHeight(20); 
+            sorter = new TableRowSorter<LogEstoqueTableModel>(model);
+            tblHistorico.setRowSorter(sorter);
         } catch (Exception e){
             JOptionPane.showMessageDialog(null, "Erro ao carregar histórico de estoque.");
         }
     }
+    
+    
+    
+    private void addLog(){
+        try{
+            getModel().addListaDeLog(EstoqueDAO.getInstance().getHistoricoEstoque());
+        } catch(Exception e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }        
+    }    
+    
+    private JTable getTblHistorico() {
+            if (tblHistorico == null) {
+                    tblHistorico = new JTable();
+                    tblHistorico.setModel(new LogEstoqueTableModel());
+            }
+            return tblHistorico;
+    }
+
+    private LogEstoqueTableModel getModel() {
+            if (model == null) {
+                    model = (LogEstoqueTableModel) getTblHistorico().getModel();
+            }
+            return model;
+    }    
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -60,6 +90,8 @@ public class FrmHistoricoEstoque extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblHistorico = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
+        txtFiltro = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Histórico de Movimentação de Estoque");
@@ -72,6 +104,7 @@ public class FrmHistoricoEstoque extends javax.swing.JDialog {
         jLabel1.setText("Histórico de Movimentação de Estoque");
 
         tblHistorico.setModel(new LogEstoqueTableModel());
+        addLog();
         jScrollPane1.setViewportView(tblHistorico);
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/accept.png"))); // NOI18N
@@ -82,6 +115,14 @@ public class FrmHistoricoEstoque extends javax.swing.JDialog {
             }
         });
 
+        txtFiltro.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtFiltroKeyReleased(evt);
+            }
+        });
+
+        jLabel2.setText("Filtro:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -91,6 +132,10 @@ public class FrmHistoricoEstoque extends javax.swing.JDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 558, Short.MAX_VALUE)
                     .addComponent(jLabel1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
@@ -100,7 +145,11 @@ public class FrmHistoricoEstoque extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addContainerGap())
@@ -132,6 +181,15 @@ public class FrmHistoricoEstoque extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtFiltroKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFiltroKeyReleased
+        String text = txtFiltro.getText();
+        if (text.length() == 0) {
+          sorter.setRowFilter(null);
+        } else {
+          sorter.setRowFilter(RowFilter.regexFilter("(?i)"+text));
+        }
+    }//GEN-LAST:event_txtFiltroKeyReleased
 
     /**
      * @param args the command line arguments
@@ -179,9 +237,11 @@ public class FrmHistoricoEstoque extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblHistorico;
+    private javax.swing.JTextField txtFiltro;
     // End of variables declaration//GEN-END:variables
 
 

@@ -3,6 +3,7 @@ package util;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -97,5 +98,20 @@ public final class Horus {
             return false;
         }        
     }
+    
+    public static boolean isToday(String inDate){
+        try {
+            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");  
+            Date data = (Date)formatter.parse(inDate);                   
+            Date hoje = (Date)formatter.parse(new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()));
+            if (data.equals(hoje)){
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e){
+            return false;
+        }        
+    }    
     
 }

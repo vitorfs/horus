@@ -237,6 +237,94 @@ public final class MostruarioDAO extends DAO{
         }        
     }
     
+    
+    public Mostruario getMostruario(int id) throws SQLException, ClassNotFoundException{
+        Connection conn = null;
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        String sql;
+        sql = "select a.id, "
+                +"a.id_revendedora, "
+                +"date_format(a.data_retirada, '%d/%m/%Y') as data_retirada, "
+                +"date_format(a.data_acerto, '%d/%m/%Y') as data_acerto, "
+                +"date_format(a.data_fechamento, '%d/%m/%Y') as data_fechamento, "
+                +"a.ic_status, "
+                +"a.qtd_venda, "
+                +"a.vl_total, "
+                +"a.comissao, "
+                +"b.*, "
+
+                +"(select sum(c.vl_produto) from t_produto_mostruario c "
+                + "where c.id_mostruario = a.id group by c.id_mostruario) "
+                + "as valor_mostruario, "
+
+                +"(select sum(d.vl_pgto) from t_pgto_mostruario d "
+                + "where d.data_rlzd_pgto is null and d.id_mostruario = a.id "
+                + "group by d.id_mostruario) "
+                + "as valor_aberto,"
+                
+                +"(select count(*) "
+                +"from t_produto_mostruario e "
+                +"where e.id_mostruario = a.id "
+                +"group by e.id_mostruario) as qtd_itens "
+            +"from t_mostruario a "
+            +"inner join t_revendedora b "
+            +"on a.id_revendedora = b.id "
+
+            + " where a.id = " + id;
+        
+        try {
+            conn = DatabaseLocator.getInstance().getConnection();
+            st = conn.prepareStatement(sql);
+            rs = st.executeQuery();
+            Mostruario m = new Mostruario();
+            
+            if (rs.first()){
+   
+                Revendedora r = new Revendedora();
+                
+                m.setId(rs.getInt("id"));
+                m.setDataAcerto(rs.getString("data_acerto"));
+                m.setDataRetirada(rs.getString("data_retirada"));
+                m.setDataFechamento(rs.getString("data_fechamento"));
+                m.setValorTotal(rs.getFloat("valor_mostruario"));
+                m.setQtdItens(rs.getInt("qtd_itens"));
+                
+                m.setStatus(rs.getInt("a.ic_status"));
+                m.setQtdItensFechamento(rs.getInt("a.qtd_venda"));
+                m.setValorFechamento(rs.getFloat("a.vl_total"));
+                m.setPercentualComissaoFechamento(rs.getFloat("a.comissao"));
+                m.setValorEmAberto(rs.getFloat("valor_aberto"));
+                
+                r.setId(rs.getInt("b.id"));
+                r.setNome(rs.getString("b.nome"));
+                r.setCpf(rs.getString("b.cpf"));
+                r.setDataNascimento(rs.getString("b.data_nascimento"));
+                r.setEmail(rs.getString("b.email"));
+                r.setTelefone1(rs.getString("b.telefone1"));
+                r.setTelefone2(rs.getString("b.telefone2"));
+                r.setComissao(rs.getFloat("b.comissao"));
+                r.setIcAtivo(rs.getInt("b.ic_ativo"));
+                r.setLogradouro(rs.getString("b.logradouro"));
+                r.setNumero(rs.getString("b.numero"));
+                r.setComplemento(rs.getString("b.complemento"));
+                r.setBairro(rs.getString("b.bairro"));
+                r.setMunicipio(rs.getString("b.municipio"));
+                r.setUf(rs.getString("b.uf"));
+                r.setCep(rs.getString("b.cep"));                
+                
+                m.setRevendedora(r);
+            }
+            
+            return m;
+            
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            closeResources(conn, st, rs);
+        }        
+    }    
+    
     public List<Produto> getListProdutos(String sql) throws SQLException, ClassNotFoundException {
         Connection conn = null;
         PreparedStatement st = null;

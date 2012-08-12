@@ -30,7 +30,6 @@ package print;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */ 
 
-import controller.ManterMostruarioController;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
@@ -41,6 +40,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import javax.imageio.ImageIO;
 import model.Mostruario;
+import model.Produto;
 import tablemodel.ProdutoMostruarioTableModel;
 
 /**
@@ -97,6 +97,13 @@ public class ImprimirRomaneio2 extends JDialog {
         model = new ProdutoMostruarioTableModel();
         try {
             model.addListaDeProdutos(mostruario.getProdutos());
+            Produto total = new Produto();
+            total.setCodigo("TOTAL");
+            total.setValorSaida(0f);
+            for (Produto p : mostruario.getProdutos()) {
+                total.setValorSaida(total.getValorSaida() + p.getValorSaida());
+            }
+            model.addProduto(total);
         } catch (Exception e){
             JOptionPane.showMessageDialog(null, "Erro ao carregar lista de produtos.");
         }
