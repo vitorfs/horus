@@ -1,0 +1,1 @@
+INSERT INTO `t_motivo_movimento_estoque` VALUES (1,'Entrada',1),(2,'Venda',1),(3,'Saída Manual',1);

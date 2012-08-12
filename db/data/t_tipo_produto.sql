@@ -1,0 +1,1 @@
+INSERT INTO `t_tipo_produto` VALUES ('AN','Anel'),('BR','Brinco'),('CR','Corrente'),('PIN','Pingente');
