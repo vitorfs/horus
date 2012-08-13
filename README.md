@@ -1,7 +1,7 @@
 Horus
 =====
 
-Software desenvolvimento em Java Swing jre6
+Software desenvolvido em Java Swing jre6
 
 Banco de dados MySQL 5.0
 
