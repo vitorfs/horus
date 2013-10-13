@@ -14,15 +14,18 @@ import controller.ManterFornecedorController;
 import controller.ManterProdutoController;
 import controller.ManterTipoProdutoController;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import model.Fornecedor;
 import model.Produto;
 import model.TipoProduto;
 import util.Horus;
+import util.ImageUploader;
 
 /**
  *
@@ -30,6 +33,8 @@ import util.Horus;
  */
 public class FrmManterProduto extends javax.swing.JDialog {
     private String id;
+    final JFileChooser fc = new JFileChooser();
+    private ImageUploader iu = new ImageUploader();
 
     /** Creates new form FrmManterProduto */
     public FrmManterProduto(java.awt.Frame parent, boolean modal, Produto produto) {
@@ -104,6 +109,9 @@ public class FrmManterProduto extends javax.swing.JDialog {
         taDescricao = new javax.swing.JTextArea();
         txtPreco = new javax.swing.JFormattedTextField();
         lbPreco = new javax.swing.JLabel();
+        btnAtualizarImagem = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        lbImagem = new javax.swing.JLabel();
         lbCodigo = new javax.swing.JLabel();
         pnDadosFornecedor = new javax.swing.JPanel();
         cbFornecedor = new javax.swing.JComboBox();
@@ -121,7 +129,7 @@ public class FrmManterProduto extends javax.swing.JDialog {
 
         pnProduto.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        lbTitleProduto.setFont(new java.awt.Font("Tahoma", 1, 24));
+        lbTitleProduto.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         lbTitleProduto.setForeground(new java.awt.Color(51, 51, 51));
         lbTitleProduto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/promotion.png"))); // NOI18N
         lbTitleProduto.setText("Produto");
@@ -151,15 +159,37 @@ public class FrmManterProduto extends javax.swing.JDialog {
 
         lbPreco.setText("Preço:");
 
+        btnAtualizarImagem.setText("Atualizar Imagem");
+        btnAtualizarImagem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAtualizarImagemActionPerformed(evt);
+            }
+        });
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        lbImagem.setText("Produto Sem Imagem");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lbImagem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lbImagem, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout pnDadosProdutoLayout = new javax.swing.GroupLayout(pnDadosProduto);
         pnDadosProduto.setLayout(pnDadosProdutoLayout);
         pnDadosProdutoLayout.setHorizontalGroup(
             pnDadosProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnDadosProdutoLayout.createSequentialGroup()
+            .addGroup(pnDadosProdutoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnDadosProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(spDescricao, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 548, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnDadosProdutoLayout.createSequentialGroup()
+                .addGroup(pnDadosProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(spDescricao, javax.swing.GroupLayout.DEFAULT_SIZE, 548, Short.MAX_VALUE)
+                    .addGroup(pnDadosProdutoLayout.createSequentialGroup()
                         .addComponent(lbNome)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -171,7 +201,14 @@ public class FrmManterProduto extends javax.swing.JDialog {
                         .addComponent(lbPreco)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtPreco, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE))
-                    .addComponent(lbDescricao, javax.swing.GroupLayout.Alignment.LEADING))
+                    .addGroup(pnDadosProdutoLayout.createSequentialGroup()
+                        .addGroup(pnDadosProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbDescricao)
+                            .addGroup(pnDadosProdutoLayout.createSequentialGroup()
+                                .addComponent(btnAtualizarImagem)
+                                .addGap(18, 18, 18)
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         pnDadosProdutoLayout.setVerticalGroup(
@@ -188,10 +225,14 @@ public class FrmManterProduto extends javax.swing.JDialog {
                 .addComponent(lbDescricao)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(spDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(pnDadosProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnAtualizarImagem)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        lbCodigo.setFont(new java.awt.Font("Tahoma", 1, 14));
+        lbCodigo.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lbCodigo.setForeground(new java.awt.Color(51, 51, 51));
 
         pnDadosFornecedor.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Dados do Fornecedor", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 11))); // NOI18N
@@ -218,17 +259,19 @@ public class FrmManterProduto extends javax.swing.JDialog {
         pnDadosFornecedorLayout.setHorizontalGroup(
             pnDadosFornecedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnDadosFornecedorLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(15, 15, 15)
                 .addGroup(pnDadosFornecedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbCodigoReferencia, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lbPrecoCompra, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lbFornecedor, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnDadosFornecedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(pnDadosFornecedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cbFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtCodigoReferencia)
-                    .addComponent(txtPrecoCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(325, Short.MAX_VALUE))
+                    .addComponent(txtPrecoCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(lbCodigoReferencia)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtCodigoReferencia, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnDadosFornecedorLayout.setVerticalGroup(
             pnDadosFornecedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -240,12 +283,10 @@ public class FrmManterProduto extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnDadosFornecedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtPrecoCompra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbPrecoCompra))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnDadosFornecedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtCodigoReferencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbCodigoReferencia))
-                .addContainerGap(15, Short.MAX_VALUE))
+                    .addComponent(lbPrecoCompra)
+                    .addComponent(lbCodigoReferencia)
+                    .addComponent(txtCodigoReferencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cancel.png"))); // NOI18N
@@ -319,14 +360,12 @@ public class FrmManterProduto extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pnProduto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(pnProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        java.awt.Dimension dialogSize = getSize();
-        setLocation((screenSize.width-dialogSize.width)/2,(screenSize.height-dialogSize.height)/2);
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void atualizarCodigo(){
@@ -372,12 +411,28 @@ public class FrmManterProduto extends javax.swing.JDialog {
             produto.setCodItemForn(txtCodigoReferencia.getText());
             produto.setIcAtivo(ckDesativarProduto.isSelected()?0:1);
             ManterProdutoController.getInstance().save(produto);
+            if (iu.getImage() != null) {
+                iu.save(produto.getTipoProduto().getCodigo() + produto.getId());
+            }
             this.dispose();
             JOptionPane.showMessageDialog(this, "O produto foi salvo com sucesso!");
         } catch (Exception e){
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void btnAtualizarImagemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarImagemActionPerformed
+        int returnVal = fc.showOpenDialog(this);
+        File file = null;
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            file = fc.getSelectedFile();
+            iu = new ImageUploader();
+            iu.upload(file);
+            ImageIcon icon = new ImageIcon(iu.resizeImage(100, 100));
+            lbImagem.setText("");
+            lbImagem.setIcon(icon);
+        }
+    }//GEN-LAST:event_btnAtualizarImagemActionPerformed
     
     public String getCodigo(){
         return lbCodigo.getText();
@@ -407,15 +462,18 @@ public class FrmManterProduto extends javax.swing.JDialog {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAtualizarImagem;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JComboBox cbFornecedor;
     private javax.swing.JComboBox cbTipoProduto;
     private javax.swing.JCheckBox ckDesativarProduto;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lbCodigo;
     private javax.swing.JLabel lbCodigoReferencia;
     private javax.swing.JLabel lbDescricao;
     private javax.swing.JLabel lbFornecedor;
+    private javax.swing.JLabel lbImagem;
     private javax.swing.JLabel lbNome;
     private javax.swing.JLabel lbPreco;
     private javax.swing.JLabel lbPrecoCompra;
