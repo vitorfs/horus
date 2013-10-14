@@ -169,7 +169,7 @@ public class FrmPanelProduto extends javax.swing.JPanel implements Observer {
         lbPaginaAtual = new javax.swing.JLabel();
         lbPagina1 = new javax.swing.JLabel();
 
-        lbTitleProduto.setFont(new java.awt.Font("Tahoma", 1, 18));
+        lbTitleProduto.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         lbTitleProduto.setForeground(new java.awt.Color(51, 51, 51));
         lbTitleProduto.setText("Produtos");
 
@@ -287,6 +287,11 @@ public class FrmPanelProduto extends javax.swing.JPanel implements Observer {
         });
 
         tblProdutos.setModel(new ProdutoTableModel());
+        tblProdutos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tblProdutosKeyReleased(evt);
+            }
+        });
         spProdutos.setViewportView(tblProdutos);
 
         btnVoltarTodos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/backward.png"))); // NOI18N
@@ -536,6 +541,21 @@ public class FrmPanelProduto extends javax.swing.JPanel implements Observer {
           sorter.setRowFilter(RowFilter.regexFilter("(?i)"+text));
         }
     }//GEN-LAST:event_txtFiltroKeyReleased
+
+    private void tblProdutosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblProdutosKeyReleased
+        if (evt.getKeyCode()==122){
+            if (tblProdutos.getSelectedColumn()!=-1&&tblProdutos.getSelectedRow()!=-1){
+                int modelRow = tblProdutos.convertRowIndexToModel(tblProdutos.getSelectedRow());
+                Produto produto = new Produto();
+                produto = (getModel().getProduto(modelRow));
+                ImagemDialog imagemDialog = new ImagemDialog(null, true, produto.getCodigo());
+                imagemDialog.setVisible(true);
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Nenhuma linha foi selecionada.");
+            }
+        }
+    }//GEN-LAST:event_tblProdutosKeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bottomPanel;

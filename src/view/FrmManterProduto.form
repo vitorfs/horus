@@ -269,6 +269,9 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Produto Sem Imagem"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lbImagemMouseClicked"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>

@@ -46,6 +46,7 @@ public class FrmHorus extends javax.swing.JFrame {
         mainTabbedPane = new javax.swing.JTabbedPane();
         mainMenu = new javax.swing.JMenuBar();
         mmArquivo = new javax.swing.JMenu();
+        mnArquivoBackup = new javax.swing.JMenuItem();
         mmArquivoSair = new javax.swing.JMenuItem();
         mmParametros = new javax.swing.JMenu();
         mmParametrosTipoProduto = new javax.swing.JMenuItem();
@@ -66,6 +67,14 @@ public class FrmHorus extends javax.swing.JFrame {
 
         mmArquivo.setMnemonic('A');
         mmArquivo.setText("Arquivo");
+
+        mnArquivoBackup.setText("Backup");
+        mnArquivoBackup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnArquivoBackupActionPerformed(evt);
+            }
+        });
+        mmArquivo.add(mnArquivoBackup);
 
         mmArquivoSair.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
         mmArquivoSair.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/door_in.png"))); // NOI18N
@@ -131,9 +140,7 @@ public class FrmHorus extends javax.swing.JFrame {
         );
 
         pack();
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        java.awt.Dimension dialogSize = getSize();
-        setLocation((screenSize.width-dialogSize.width)/2,(screenSize.height-dialogSize.height)/2);
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void mmArquivoSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mmArquivoSairActionPerformed
@@ -147,6 +154,15 @@ public class FrmHorus extends javax.swing.JFrame {
     private void mmAjudaSobreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mmAjudaSobreActionPerformed
         new FrmSobre(this, true).setVisible(true);
     }//GEN-LAST:event_mmAjudaSobreActionPerformed
+
+    private void mnArquivoBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnArquivoBackupActionPerformed
+        try {
+            Process runtimeProcess = Runtime.getRuntime().exec("cmd /c start backup.bat");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_mnArquivoBackupActionPerformed
 
     /**
      * @param args the command line arguments
@@ -174,5 +190,6 @@ public class FrmHorus extends javax.swing.JFrame {
     private javax.swing.JMenuItem mmArquivoSair;
     private javax.swing.JMenu mmParametros;
     private javax.swing.JMenuItem mmParametrosTipoProduto;
+    private javax.swing.JMenuItem mnArquivoBackup;
     // End of variables declaration//GEN-END:variables
 }

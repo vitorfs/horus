@@ -35,6 +35,7 @@ public class FrmManterProduto extends javax.swing.JDialog {
     private String id;
     final JFileChooser fc = new JFileChooser();
     private ImageUploader iu = new ImageUploader();
+    private Produto produtoOriginal = null;
 
     /** Creates new form FrmManterProduto */
     public FrmManterProduto(java.awt.Frame parent, boolean modal, Produto produto) {
@@ -61,6 +62,7 @@ public class FrmManterProduto extends javax.swing.JDialog {
             txtCodigoReferencia.setText(produto.getCodItemForn());
         }
         else {
+            produtoOriginal = produto;
             this.setTitle("Alterar Produto");
             this.id = produto.getId().toString();
             lbCodigo.setText(produto.getCodigo());
@@ -84,6 +86,18 @@ public class FrmManterProduto extends javax.swing.JDialog {
             }
             
             ckDesativarProduto.setSelected(produto.getIcAtivo()==0?true:false);
+            
+            try {
+                BufferedImage img = ImageIO.read(new File("media/" + produto.getCodigo() + ".jpg"));
+                img = iu.resizeImage(img, 100, 100);
+                if (img != null) {
+                    ImageIcon icon = new ImageIcon(img);
+                    lbImagem.setText("");
+                    lbImagem.setIcon(icon);
+                }
+            } catch (Exception e) {
+                
+            }
                     
         }
     }
@@ -169,6 +183,11 @@ public class FrmManterProduto extends javax.swing.JDialog {
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         lbImagem.setText("Produto Sem Imagem");
+        lbImagem.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbImagemMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -433,6 +452,13 @@ public class FrmManterProduto extends javax.swing.JDialog {
             lbImagem.setIcon(icon);
         }
     }//GEN-LAST:event_btnAtualizarImagemActionPerformed
+
+    private void lbImagemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbImagemMouseClicked
+        if (produtoOriginal != null) {
+            ImagemDialog imagemDialog = new ImagemDialog(null, true, produtoOriginal.getCodigo());
+            imagemDialog.setVisible(true);
+        }
+    }//GEN-LAST:event_lbImagemMouseClicked
     
     public String getCodigo(){
         return lbCodigo.getText();

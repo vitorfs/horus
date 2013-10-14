@@ -15,8 +15,7 @@ import javax.imageio.ImageIO;
  */
 public class ImageUploader {
     
-    private static final int IMG_WIDTH = 250;
-    private static final int IMG_HEIGHT = 250;
+    private static final int IMG_SIZE = 500;
     
     private BufferedImage image;
     
@@ -67,7 +66,26 @@ public class ImageUploader {
     }
     
     public BufferedImage resizeImage(BufferedImage originalImage, int type){
-        return resizeImage(originalImage, type, IMG_WIDTH, IMG_HEIGHT);
+        int height = originalImage.getHeight();
+        int width = originalImage.getWidth();
+        if (height > width && height > IMG_SIZE) {
+            width = (width * IMG_SIZE) / height;
+            height = IMG_SIZE;
+        }
+        else if (width > height && width > IMG_SIZE) {
+            height = (height * IMG_SIZE) / width;
+            width = IMG_SIZE;
+        }
+        else if (width == height && width > IMG_SIZE) {
+            height = IMG_SIZE;
+            width = IMG_SIZE;
+        }
+        return resizeImage(originalImage, type, width, height);
+    }
+    
+    public BufferedImage resizeImage(BufferedImage originalImage, int width, int height) {
+        int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+        return resizeImage(originalImage, type, width, height);
     }
     
     public BufferedImage resizeImage(int width, int height) {
